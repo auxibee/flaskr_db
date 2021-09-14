@@ -1,0 +1,14 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;   
+}
+
+.sidebar a{
+    margin: 2px;
+}
+
+.blog-post{
+    border: 1px solid #333;
+    margin: 2px;
+    padding: 5px;   
+}
