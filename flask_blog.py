@@ -51,6 +51,7 @@ def home():
 
 @app.route('/about')
 def about_us():
+
     return render_template('about.html')
 
 @app.route('/register',methods = ['GET', 'POST'])
