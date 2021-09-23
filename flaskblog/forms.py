@@ -44,6 +44,10 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('email has been used to register an account')
 
 
+class NewPostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    body = StringField('Body', validators=[DataRequired()])
+    submit = SubmitField('Post')
     
 
 
