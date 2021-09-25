@@ -1,6 +1,6 @@
-from flask import request, Blueprint, render_template
+from flask import request, Blueprint, render_template, current_app
 from flaskblog.models import Post
-from flaskblog import app
+
 
 
 main = Blueprint('main', __name__)
@@ -10,7 +10,7 @@ main = Blueprint('main', __name__)
 def home():
     page = request.args.get('page', 1, type=int)
     
-    posts = Post.query.order_by(Post.created_at.desc()).paginate(page=page,per_page=app.config['POST_PER_PAGE'])
+    posts = Post.query.order_by(Post.created_at.desc()).paginate(page=page,per_page=current_app.config['POST_PER_PAGE'])
 
     return render_template('home.html', posts = posts, title='learning flask')
 
