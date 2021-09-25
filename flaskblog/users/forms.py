@@ -44,15 +44,27 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('email has been used to register an account')
 
 
-class NewPostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    body = StringField('Body', validators=[DataRequired()])
-    submit = SubmitField('Post')
-    
-
-
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[Email(), DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember me')
     submit = SubmitField('Log in')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', validators=[Email(), DataRequired()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        email_exits = User.query.filter_by(email=email.data).first()
+        if email_exits is None:
+            raise ValidationError('There is no account with that email you must register first')
+
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
+
