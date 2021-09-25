@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'e133c32c00b2eb8f676e8695531d0ee3'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['POST_PER_PAGE'] = 5
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
