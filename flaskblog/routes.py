@@ -8,25 +8,14 @@ from flask import  render_template, url_for, flash, redirect
 from flaskblog.forms import LoginForm, RegistrationForm, UpdateAccountForm, NewPostForm
 from flaskblog.models import load_user
 
-posts = [
-    {
-        'author': 'yaw twumasi',
-        'title' : 'this is good',
-        'content': 'we start by making fight',
-        'date_posted': 'April-2021'
-    },
-    {
-        'author': 'jane doe',
-        'title' : 'this is crasy',
-        'content': 'we start by making fight',
-        'date_posted': 'April-2021'
-    }
-]
 
 @app.route('/')
 @app.route('/home')
 def home():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    
+    posts = Post.query.order_by(Post.created_at.desc()).paginate(page=page,per_page=app.config['POST_PER_PAGE'])
+
     return render_template('home.html', posts = posts, title='learning flask')
 
 @app.route('/about')
@@ -37,7 +26,7 @@ def about_us():
 @app.route('/register',methods = ['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect( url_for('home'))
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -136,3 +125,29 @@ def update_post(post_id):
         form.body.data = post.content
     
     return render_template('new_post.html', title=post.title, post=post, form=form, legend=legend)
+
+
+@app.route('/post/<int:post_id>/delete', methods = ['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('post has been deleted succesfully', 'info')
+    return redirect(url_for('home'))
+
+
+@app.route('/posts/<string:username>')
+def posts_by_user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page',1, type=int)
+ 
+    posts = Post.query.filter_by(author=user)\
+                    .order_by(Post.created_at.desc())\
+                    .paginate(page=page,per_page=app.config['POST_PER_PAGE'])
+    return render_template('user_posts.html', title=f'Posts by {user.username}', posts=posts, user=user)
+  
+
+
