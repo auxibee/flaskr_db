@@ -1,10 +1,22 @@
 {% extends "layout.html" %} 
 {% block content %}
-    {% for post in posts %}
+    {% for post in posts.items %}
         <div class="blog-post">
             <h1> <a class="article-title" href="{{ url_for('post', post_id=post.id)}}">{{ post.title }}</a> </h1>
-            <p> by {{ post.author.username }} on {{ post.created_at.strftime('%Y-%m-%d') }}</p>
+            <p> by <a href="{{url_for('posts_by_user', username=post.author.username)}}">{{ post.author.username }}</a> on {{ post.created_at.strftime('%Y-%m-%d') }}</p>
             <p> {{ post.content }} </p>
         </div>    
+    {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn--info mb-4" href="{{ url_for('home', page=page_num)}}"> {{page_num}} </a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num)}}"> {{page_num}} </a>
+            {% endif %}   
+        {% else %}
+            ....
+        {% endif %}
+         
     {% endfor %}
 {% endblock content %}
