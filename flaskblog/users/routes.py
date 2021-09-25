@@ -1,8 +1,8 @@
-from flask import Blueprint,request, abort, render_template, url_for, flash, redirect
+from flask import Blueprint,request, abort, render_template, url_for, flash, redirect, current_app
 from flask_login.utils import login_user, current_user, logout_user, login_required
 from flaskblog.users.utils import delete_profile_picture, save_picture, send_reset_email
 from flaskblog.models import User, Post
-from flaskblog import app, db, bcrypt, mail
+from flaskblog import  db, bcrypt, mail
 from flaskblog.users.forms import (LoginForm, RegistrationForm, RequestResetForm, 
                                 UpdateAccountForm, RequestResetForm, ResetPasswordForm)
 
@@ -83,7 +83,7 @@ def posts_by_user(username):
  
     posts = Post.query.filter_by(author=user)\
                     .order_by(Post.created_at.desc())\
-                    .paginate(page=page,per_page=app.config['POST_PER_PAGE'])
+                    .paginate(page=page,per_page=current_app.config['POST_PER_PAGE'])
     return render_template('user_posts.html', title=f'Posts by {user.username}', posts=posts, user=user)
 
 
